@@ -60,7 +60,7 @@ public class GoldManager : MonoBehaviour
 
 
     [Header("Rule")]
-    [Min(1)] public int killsPerGold = 20;
+    [Min(1)] public int killsPerGold = 10;
 
 
     private int _killCount;
