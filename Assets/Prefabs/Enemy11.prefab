@@ -240,7 +240,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 20a010b4312475848bb77db3a6c4c729, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -286,7 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 966e5d61dfbe4cd41b77264ad35e47e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3.1
+  speed: 2.7
   hitSound: {fileID: 8300000, guid: 3f3650405c7c04445aa0cdee3469026d, type: 3}
   explosionPrefab: {fileID: 1247846330800260, guid: 287d299a9d2286749acea0d6a16f804f, type: 3}
 --- !u!114 &4923005473521863313

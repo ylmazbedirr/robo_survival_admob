@@ -1,3 +1,4 @@
+
 // ─────────────────────────────────────────────────────────────────────────────
 // File: Assets/Scripts/Boot/PerfRescue.cs
 // Purpose: If early avg-FPS is low or there are spikes, apply conservative runtime quality cuts.
@@ -36,7 +37,10 @@ public sealed class PerfRescue : MonoBehaviour
                 QualitySettings.vSyncCount = 0; // AQT targetFrameRate'i yönetsin
                                                 // (visual-safe) do not change pixelLightCount
                 QualitySettings.shadowCascades = 0; QualitySettings.shadowDistance = Mathf.Min(QualitySettings.shadowDistance, 20f);
+
+
                 /*
+
                 QualitySettings.antiAliasing = 0; QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable; QualitySettings.lodBias = Mathf.Min(QualitySettings.lodBias, 0.6f);
 #if UNITY_2021_1_OR_NEWER
                 QualitySettings.globalTextureMipmapLimit = Mathf.Max(QualitySettings.globalTextureMipmapLimit, 1);
@@ -53,6 +57,8 @@ UnityEngine.Object.FindObjectsOfType<ParticleSystem>();
                 // (visual-safe) do not touch camera HDR/MSAA here
                 QualitySettings.softParticles = false; QualitySettings.realtimeReflectionProbes = false; Shader.globalMaximumLOD = Mathf.Min(Shader.globalMaximumLOD, 300);
                 Debug.Log("[PerfRescue] Runtime downshift applied.");
+
+
                 
                 */
         }

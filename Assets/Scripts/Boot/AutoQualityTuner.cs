@@ -1,3 +1,5 @@
+
+
 // ─────────────────────────────────────────────────────────────────────────────
 // File: Assets/Scripts/Boot/AutoQualityTuner.cs
 // Purpose: Measure early-FPS → choose Low/Mid/High profile (renderScale, shadows, LOD, textures, target FPS).
@@ -94,37 +96,38 @@ public sealed class AutoQualityTuner : MonoBehaviour
             if (showOverlay) Debug.Log($"[AQT] tier={tier} → {p.targetFps} FPS @ scale {p.renderScale}");
         }
     */
+    
 
     private void ApplyTier(Tier tier)
-    {
-        _applied = tier; _appliedOnce = true;
-        PlayerPrefs.SetInt(_ppKey, (int)tier); PlayerPrefs.Save();
-        var p = tier == Tier.Low ? low : (tier == Tier.Mid ? mid : high);
+{
+    _applied = tier; _appliedOnce = true;
+    PlayerPrefs.SetInt(_ppKey, (int)tier); PlayerPrefs.Save();
+    var p = tier == Tier.Low ? low : (tier == Tier.Mid ? mid : high);
 
-        // 1) FPS pacing
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = p.targetFps;
+    // 1) FPS pacing
+    QualitySettings.vSyncCount = 0;
+    Application.targetFrameRate = p.targetFps;
 
-        // 2) Sadece çözünürlük ölçeği (URP varsa renderScale, yoksa S.B.Manager)
-        TrySetRenderScale(p.renderScale);
+    // 2) Sadece çözünürlük ölçeği (URP varsa renderScale, yoksa S.B.Manager)
+    TrySetRenderScale(p.renderScale);
 
-        // 3) Görsel-güvenli: AŞAĞIDAKİLERİ KULLANMA
-        // QualitySettings.shadowCascades = p.shadows ? 2 : 0;
-        // QualitySettings.shadowDistance = p.shadows ? Mathf.Min(QualitySettings.shadowDistance, 25f) : 0f;
-        // QualitySettings.antiAliasing = 0;
-        // QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
-        // #if UNITY_2021_1_OR_NEWER
-        // QualitySettings.globalTextureMipmapLimit = Mathf.Max(QualitySettings.globalTextureMipmapLimit, p.texMipLimit);
-        // #else
-        // QualitySettings.masterTextureLimit = ...
-        // #endif
-        // QualitySettings.lodBias = Mathf.Min(QualitySettings.lodBias, p.lodBias);
+    // 3) Görsel-güvenli: AŞAĞIDAKİLERİ KULLANMA
+    // QualitySettings.shadowCascades = p.shadows ? 2 : 0;
+    // QualitySettings.shadowDistance = p.shadows ? Mathf.Min(QualitySettings.shadowDistance, 25f) : 0f;
+    // QualitySettings.antiAliasing = 0;
+    // QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
+    // #if UNITY_2021_1_OR_NEWER
+    // QualitySettings.globalTextureMipmapLimit = Mathf.Max(QualitySettings.globalTextureMipmapLimit, p.texMipLimit);
+    // #else
+    // QualitySettings.masterTextureLimit = ...
+    // #endif
+    // QualitySettings.lodBias = Mathf.Min(QualitySettings.lodBias, p.lodBias);
 
-        // Kameralara da DOKUNMA (HDR/MSAA)
-        // var cams = GetAllCameras(); foreach (var c in cams) { c.allowHDR = false; c.allowMSAA = false; }
+    // Kameralara da DOKUNMA (HDR/MSAA)
+    // var cams = GetAllCameras(); foreach (var c in cams) { c.allowHDR = false; c.allowMSAA = false; }
 
-        if (showOverlay) Debug.Log($"[AQT] tier={tier} → {p.targetFps} FPS @ scale {p.renderScale}");
-    }
+    if (showOverlay) Debug.Log($"[AQT] tier={tier} → {p.targetFps} FPS @ scale {p.renderScale}");
+}
 
     private void TrySetRenderScale(float scale)
     {
@@ -142,3 +145,4 @@ return Camera.allCamerasCount>0?Camera.allCameras:GameObject.FindObjectsOfType<C
 #endif
     }
 }
+

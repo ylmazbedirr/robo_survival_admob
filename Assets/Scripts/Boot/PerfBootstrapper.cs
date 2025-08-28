@@ -1,3 +1,4 @@
+
 // ─────────────────────────────────────────────────────────────────────────────
 // File: Assets/Scripts/Boot/PerfBootstrapper.cs
 // Purpose: Start PerfRescue + AutoQualityTuner at app boot. No FPS logic here.

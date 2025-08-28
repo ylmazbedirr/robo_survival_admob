@@ -310,7 +310,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] private float smoothTime = 0.05f;
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private float speed = 10f;
     private float _currentVelocity;
 
 
@@ -345,8 +345,12 @@ public class PlayerController : MonoBehaviour
 
 
         Vector3 p = transform.position;
-        p.x = Mathf.Clamp(p.x, -18.5f, 18.5f);
-        p.z = Mathf.Clamp(p.z, -18.2f, 19.2f);
+        // p.x = Mathf.Clamp(p.x, -18.5f, 18.5f);
+        //  p.z = Mathf.Clamp(p.z, -18.2f, 19.2f);
+
+        p.x = Mathf.Clamp(p.x, -19.4f, 22.60f);
+        p.z = Mathf.Clamp(p.z, -25f, 16.50f);
+
         transform.position = p;
     }
 
@@ -358,4 +362,6 @@ public class PlayerController : MonoBehaviour
         _input = context.ReadValue<Vector2>();
     }
 }
+
+
 

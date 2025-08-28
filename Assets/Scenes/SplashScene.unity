@@ -437,9 +437,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canvasGroup: {fileID: 2072012918}
   nextScene: MainMenu
-  fadeIn: 1
-  hold: 1
-  fadeOut: 0.8
 --- !u!1 &1817815510
 GameObject:
   m_ObjectHideFlags: 0
