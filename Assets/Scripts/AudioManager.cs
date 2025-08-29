@@ -113,15 +113,15 @@ public class AudioManager : MonoBehaviour
     }
 
     */
-
     public void PlayAt(AudioClip clip, Vector3 pos, float volume = 1f, float pitch = 1f)
     {
-        if (clip == null) return;
+        if (clip == null || SFXVolume <= 0.01f) return;
+
         var src = audioPool[audioIndex];
         audioIndex = (audioIndex + 1) % audioPool.Length;
 
         src.transform.position = pos;
-        src.volume = volume;
+        src.volume = Mathf.Clamp01(SFXVolume * volume);
         src.pitch = pitch;
         src.clip = clip;
         src.Play();

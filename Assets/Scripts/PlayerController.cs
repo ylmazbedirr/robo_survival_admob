@@ -348,7 +348,7 @@ public class PlayerController : MonoBehaviour
         // p.x = Mathf.Clamp(p.x, -18.5f, 18.5f);
         //  p.z = Mathf.Clamp(p.z, -18.2f, 19.2f);
 
-        p.x = Mathf.Clamp(p.x, -19.4f, 22.60f);
+        p.x = Mathf.Clamp(p.x, -19.3f, 22.60f);
         p.z = Mathf.Clamp(p.z, -25f, 16.50f);
 
         transform.position = p;
