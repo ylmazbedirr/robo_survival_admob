@@ -310,7 +310,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] private float smoothTime = 0.05f;
-    [SerializeField] private float speed = 10f;
+    [SerializeField] private float speed = 9f;
     private float _currentVelocity;
 
 

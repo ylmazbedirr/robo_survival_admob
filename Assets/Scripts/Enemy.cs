@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private float speed = 3f;
+    [SerializeField] private float speed;
+    private float defaultSpeed;
     [SerializeField] private AudioClip hitSound;
     [SerializeField] private GameObject explosionPrefab;
 
@@ -69,4 +70,25 @@ public class Enemy : MonoBehaviour
             Debug.Log("Game Over");
         }
     }
+
+    // Extra özellik için
+
+    void OnEnable()
+    {
+        defaultSpeed = speed;
+        isDead = false;
+    }
+
+    public void SetSpeed(float newSpeed)
+    {
+        speed = newSpeed;
+    }
+
+    public void ResetSpeed()
+    {
+        speed = defaultSpeed;
+    }
+
+
+
 }

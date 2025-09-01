@@ -169,4 +169,11 @@ public class PlayerHealth : MonoBehaviour
         Time.timeScale = 0f;
         if (deathMenuRoot) deathMenuRoot.SetActive(true);
     }
+
+    public void TakeHeal(int amount)
+    {
+        if (CurrentHealth <= 0 || isDying) return;
+        CurrentHealth = Mathf.Min(maxHealth, amount);
+        OnDamaged?.Invoke(CurrentHealth); // UI’ı günceller
+    }
 }
