@@ -8,6 +8,7 @@ TagManager:
   - Music
   - DeathMenu
   - Ground
+  - HealthOrb
   layers:
   - Default
   - TransparentFX
