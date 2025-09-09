@@ -4,8 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class DeathMenu : MonoBehaviour
 {
-
-
     public void Retry()
     {
         Time.timeScale = 1f;

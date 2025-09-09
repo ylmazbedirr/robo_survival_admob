@@ -47,33 +47,50 @@ public class PlayerDeathHandler : MonoBehaviour
 
 using UnityEngine;
 
-
 public class PlayerDeathHandler : MonoBehaviour
 {
-    [SerializeField] private PlayerHealth health;
-    [SerializeField] private GameObject deathMenu;
+    [SerializeField]
+    private PlayerHealth health;
 
+    [SerializeField]
+    private GameObject deathMenu;
 
     private void Awake()
     {
-        if (health == null) health = GetComponent<PlayerHealth>();
+        if (health == null)
+            health = GetComponent<PlayerHealth>();
         if (deathMenu == null)
         {
             var tagged = GameObject.FindGameObjectWithTag("DeathMenu");
-            if (tagged != null) deathMenu = tagged;
-            else { var named = GameObject.Find("DeathMenu"); if (named != null) deathMenu = named; }
+            if (tagged != null)
+                deathMenu = tagged;
+            else
+            {
+                var named = GameObject.Find("DeathMenu");
+                if (named != null)
+                    deathMenu = named;
+            }
         }
-        if (deathMenu != null) deathMenu.SetActive(false);
+        if (deathMenu != null)
+            deathMenu.SetActive(false);
     }
 
+    private void OnEnable()
+    {
+        if (health != null)
+            health.OnDied += HandleDeath;
+    }
 
-    private void OnEnable() { if (health != null) health.OnDied += HandleDeath; }
-    private void OnDisable() { if (health != null) health.OnDied -= HandleDeath; }
-
+    private void OnDisable()
+    {
+        if (health != null)
+            health.OnDied -= HandleDeath;
+    }
 
     private void HandleDeath()
     {
         Time.timeScale = 0f;
-        if (deathMenu != null) deathMenu.SetActive(true);
+        if (deathMenu != null)
+            deathMenu.SetActive(true);
     }
 }

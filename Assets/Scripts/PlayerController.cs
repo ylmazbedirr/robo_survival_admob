@@ -1,75 +1,11 @@
-/* 
-//using UnityEditor.Toolbars;
-using UnityEngine;
-using UnityEngine.InputSystem;
-
-
-[RequireComponent(typeof(CharacterController))]
-public class PlayerController : MonoBehaviour
-{
-    private Vector2 _input;
-    private CharacterController _characterController;
-    private Vector3 _direction;
-
-    [SerializeField] private float smoothTime = 0.05f;
-    [SerializeField] private float speed = 10f;
-    private float _currentVelocity;
-
-
-    private void Awake()
-    {
-        _characterController = GetComponent<CharacterController>();
-
-
-
-    }
-
-
-    private void Update()
-    {
-
-        if (_direction == Vector3.zero) return;
-
-        float targetAngle = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg;
-        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _currentVelocity, smoothTime);
-
-        transform.rotation = Quaternion.Euler(0f, angle, 0f);
-        _characterController.Move(_direction * speed * Time.deltaTime);
-
-        // 🔒 Pozisyon sınırla
-        Vector3 clampedPosition = transform.position;
-        clampedPosition.x = Mathf.Clamp(clampedPosition.x, -18.5f, 18.5f);
-        clampedPosition.z = Mathf.Clamp(clampedPosition.z, -18.2f, 19.2f);
-        transform.position = clampedPosition;
-
-
-    }
-
-
-    public void Move(InputAction.CallbackContext context)
-    {
-        _input = context.ReadValue<Vector2>();
-        _direction = new Vector3(_input.x, 0f, _input.y);
-    }
-
-
-}
-
-*/
-
-
-
-
-/*
-
 // File: Assets/Scripts/PlayerController.cs
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Joystick Pack'teki FixedJoystick'i kullanıyoruz
-// using JoystickPackNamespace; // yoksa gerekmez
-
-[RequireComponent(typeof(CharacterController))]
+/// <summary>
+/// Safe movement controller: guards against NaN/Infinity during ad/retry flows.
+/// WHY: Ad/show or retry can leave inputs/velocities invalid; we sanitize every frame.
+/// </summary>
 public class PlayerController : MonoBehaviour
 {
     private Vector2 _input;
@@ -77,291 +13,121 @@ public class PlayerController : MonoBehaviour
     private Vector3 _direction;
 
     [Header("Movement")]
-    [SerializeField] private float smoothTime = 0.05f;
-    [SerializeField] private float speed = 10f;
-    private float _currentVelocity;
+    [SerializeField]
+    private float smoothTime = 0.05f;
 
-    [Header("Mobile (Optional)")]
-    [SerializeField] private FixedJoystick mobileJoystick; // Joystick Pack objesini sürükle
-    [SerializeField] private float joystickDeadzone = 0.12f; // çok küçük titremeyi yut
-
-    private void Awake()
-    {
-        _characterController = GetComponent<CharacterController>();
-    }
-
-    private void Update()
-    {
-        // Eğer ekranda FixedJoystick varsa ve anlamlı input veriyorsa onu kullan
-        if (mobileJoystick != null)
-        {
-            var j = new Vector2(mobileJoystick.Horizontal, mobileJoystick.Vertical);
-            if (j.sqrMagnitude > joystickDeadzone * joystickDeadzone)
-            {
-                _input = Vector2.ClampMagnitude(j, 1f);
-            }
-            else
-            {
-                // joystick boşsa, klavye/IM gui'den gelen son _input olduğu gibi kalır
-            }
-        }
-
-        _direction = new Vector3(_input.x, 0f, _input.y);
-        if (_direction == Vector3.zero) return;
-
-        float targetAngle = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg;
-        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _currentVelocity, smoothTime);
-
-        transform.rotation = Quaternion.Euler(0f, angle, 0f);
-        _characterController.Move(_direction * speed * Time.deltaTime);
-
-        // Alanı sınırlama (senin mevcut değerlerin)
-        Vector3 clamped = transform.position;
-        clamped.x = Mathf.Clamp(clamped.x, -18.5f, 18.5f);
-        clamped.z = Mathf.Clamp(clamped.z, -18.2f, 19.2f);
-        transform.position = clamped;
-    }
-
-    // New Input System'den (WASD, gamepad) gelir
-    public void Move(InputAction.CallbackContext context)
-    {
-        _input = context.ReadValue<Vector2>();
-        // mobileJoystick varsa ve aktif input veriyorsa Update'te override eder
-    }
-}
-
-
-*/
-
-
-
-// Fixed Joyistik Version
-
-/*
-
-
-// File: Assets/Scripts/PlayerController.cs
-using UnityEngine;
-using UnityEngine.InputSystem;
-
-[RequireComponent(typeof(CharacterController))]
-public class PlayerController : MonoBehaviour
-{
-    private Vector2 _input;
-    private CharacterController _characterController;
-    private Vector3 _direction;
-
-    [Header("Movement")]
-    [SerializeField] private float smoothTime = 0.05f;
-    [SerializeField] private float speed = 5f;
-    private float _currentVelocity;
-
-    [Header("Mobile (Optional)")]
-    [SerializeField] private FixedJoystick mobileJoystick; // sahnedeki joystick'i sürükle
-    [SerializeField] private float joystickDeadzone = 0.12f;
-
-    private bool _joystickActiveLast; // neden: bırakınca sıfırlamak
-
-    private void Awake()
-    {
-        _characterController = GetComponent<CharacterController>();
-    }
-
-    private void Update()
-    {
-        // 1) Joystick varsa onu oku
-        if (mobileJoystick != null)
-        {
-            Vector2 j = new Vector2(mobileJoystick.Horizontal, mobileJoystick.Vertical);
-
-            float dz2 = joystickDeadzone * joystickDeadzone;
-            if (j.sqrMagnitude > dz2)
-            {
-                _input = Vector2.ClampMagnitude(j, 1f);
-                _joystickActiveLast = true;
-            }
-            else
-            {
-                // Joystick bırakıldıysa input'u net sıfırla
-                if (_joystickActiveLast)
-                {
-                    _input = Vector2.zero;
-                    _joystickActiveLast = false;
-                }
-                // değilse, klavyeden gelen son değer kalabilir
-            }
-        }
-
-        _direction = new Vector3(_input.x, 0f, _input.y);
-        if (_direction == Vector3.zero) return;
-
-        float targetAngle = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg;
-        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _currentVelocity, smoothTime);
-
-        transform.rotation = Quaternion.Euler(0f, angle, 0f);
-        _characterController.Move(_direction * speed * Time.deltaTime);
-
-        // sınırlar
-        Vector3 clamped = transform.position;
-        clamped.x = Mathf.Clamp(clamped.x, -18.5f, 18.5f);
-        clamped.z = Mathf.Clamp(clamped.z, -18.2f, 19.2f);
-        transform.position = clamped;
-    }
-
-    // New Input System (WASD/gamepad)
-    public void Move(InputAction.CallbackContext context)
-    {
-        if (context.canceled)
-        {
-            _input = Vector2.zero;        // parmak/tuş bırakılınca dur
-            return;
-        }
-
-        // klavye/gamepad değeri; joystick aktifse Update'te override edilir
-        _input = context.ReadValue<Vector2>();
-    }
-}
-
-
-
-*/
-
-
-/*
-
-// Dynamic Joyistik Version
-
-
-using UnityEngine;
-using UnityEngine.InputSystem;
-
-public class PlayerController : MonoBehaviour
-{
-    private Vector2 _input;
-    private CharacterController _characterController;
-    private Vector3 _direction;
-
-    [Header("Movement")]
-    [SerializeField] private float smoothTime = 0.05f;
-    [SerializeField] private float speed = 5f;
+    [SerializeField]
+    private float speed = 10f;
     private float _currentVelocity;
 
     [Header("Mobile Joystick (Joystick Pack)")]
-    [SerializeField] private Joystick dynamicJoystick;   // Canvas'taki Dynamic Joystick'i sürükle
-    [Range(0f, 0.4f)][SerializeField] private float mobileDeadzone = 0.12f;
+    [SerializeField]
+    private Joystick dynamicJoystick;
 
-    private void Awake()
-    {
-        _characterController = GetComponent<CharacterController>();
-       // QualitySettings.vSyncCount = 0;           // VSync kapalı (aksi halde cihazın pacing’i yönetir)
-      //  Application.targetFrameRate = 60;          // Stabil 60 FPS
-        // Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
+    [Range(0f, 0.4f)]
+    [SerializeField]
+    private float mobileDeadzone = 0.12f;
 
-    }
-
-    private void Update()
-    {
-        // JOYSTICK VARSA: her kare joystick'i KESİN olarak kaynak al
-        if (dynamicJoystick != null)
-        {
-            Vector2 j = new Vector2(dynamicJoystick.Horizontal, dynamicJoystick.Vertical);
-            if (j.magnitude < mobileDeadzone) j = Vector2.zero;
-            _input = Vector2.ClampMagnitude(j, 1f);        // <- bırakınca _input = (0,0)
-        }
-
-        _direction = new Vector3(_input.x, 0f, _input.y);
-        if (_direction == Vector3.zero) return;
-
-        float targetAngle = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg;
-        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _currentVelocity, smoothTime);
-
-        transform.rotation = Quaternion.Euler(0f, angle, 0f);
-        _characterController.Move(_direction * speed * Time.deltaTime);
-
-        // sınırlar
-        Vector3 p = transform.position;
-        p.x = Mathf.Clamp(p.x, -18.5f, 18.5f);
-        p.z = Mathf.Clamp(p.z, -18.2f, 19.2f);
-        transform.position = p;
-    }
-
-    // Yeni Input Sistemi (WASD). Joystick bağlıysa bunu YOK SAY.
-    public void Move(InputAction.CallbackContext context)
-    {
-        if (dynamicJoystick != null) return;           // <- kritik
-        if (context.canceled) { _input = Vector2.zero; return; }
-        _input = context.ReadValue<Vector2>();
-    }
-}
-
-*/
-
-
-using UnityEngine;
-using UnityEngine.InputSystem;
-
-
-public class PlayerController : MonoBehaviour
-{
-    private Vector2 _input;
-    private CharacterController _characterController;
-    private Vector3 _direction;
-
-
-    [Header("Movement")]
-    [SerializeField] private float smoothTime = 0.05f;
-    [SerializeField] private float speed = 10f;
-    private float _currentVelocity;
-
-
-    [Header("Mobile Joystick (Joystick Pack)")]
-    [SerializeField] private Joystick dynamicJoystick;
-    [Range(0f, 0.4f)][SerializeField] private float mobileDeadzone = 0.12f;
-
+    [Header("Runtime State")]
+    [SerializeField]
+    private bool isDead = false; // WHY: hard-stop update when dead
 
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
     }
 
+    private static bool Finite(float f) => !(float.IsNaN(f) || float.IsInfinity(f));
+
+    private static bool Finite(Vector2 v) => Finite(v.x) && Finite(v.y);
+
+    private static bool Finite(Vector3 v) => Finite(v.x) && Finite(v.y) && Finite(v.z);
+
     private void Update()
     {
+        if (isDead)
+            return; // WHY: prevent any motion/rotation when dead
+
+        // sanitize stale values (once NaN, always NaN unless reset)
+        if (!Finite(_currentVelocity))
+            _currentVelocity = 0f;
+        if (!Finite(_input))
+            _input = Vector2.zero;
+
+        // mobile joystick input path
         if (dynamicJoystick != null)
         {
             Vector2 j = new Vector2(dynamicJoystick.Horizontal, dynamicJoystick.Vertical);
-            if (j.magnitude < mobileDeadzone) j = Vector2.zero;
+            if (!Finite(j))
+                j = Vector2.zero; // WHY: some joystick impls return NaN when disabled
+            if (j.magnitude < mobileDeadzone)
+                j = Vector2.zero;
             _input = Vector2.ClampMagnitude(j, 1f);
         }
 
-
+        // build direction
         _direction = new Vector3(_input.x, 0f, _input.y);
-        if (_direction == Vector3.zero) return;
+        if (!Finite(_direction) || _direction == Vector3.zero)
+            return;
 
-
+        // angle math
         float targetAngle = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg;
-        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _currentVelocity, smoothTime);
+        if (!Finite(targetAngle))
+            return;
+
+        float angle = Mathf.SmoothDampAngle(
+            transform.eulerAngles.y,
+            targetAngle,
+            ref _currentVelocity,
+            smoothTime
+        );
+        if (!Finite(angle))
+        {
+            _currentVelocity = 0f;
+            return;
+        }
+
         transform.rotation = Quaternion.Euler(0f, angle, 0f);
-        _characterController.Move(_direction * speed * Time.deltaTime);
 
+        // move
+        Vector3 move = _direction * speed * Time.deltaTime;
+        if (!Finite(move))
+            return;
+        _characterController.Move(move);
 
+        // bounds
         Vector3 p = transform.position;
-        // p.x = Mathf.Clamp(p.x, -18.5f, 18.5f);
-        //  p.z = Mathf.Clamp(p.z, -18.2f, 19.2f);
-
+        if (!Finite(p))
+            return;
         p.x = Mathf.Clamp(p.x, -19.4f, 22.60f);
         p.z = Mathf.Clamp(p.z, -25f, 16.50f);
-
         transform.position = p;
     }
 
-
     public void Move(InputAction.CallbackContext context)
     {
-        if (dynamicJoystick != null) return;
-        if (context.canceled) { _input = Vector2.zero; return; }
-        _input = context.ReadValue<Vector2>();
+        if (dynamicJoystick != null)
+            return; // WHY: mobile path owns _input
+        if (context.canceled)
+        {
+            _input = Vector2.zero;
+            return;
+        }
+        var v = context.ReadValue<Vector2>();
+        _input = Finite(v) ? v : Vector2.zero; // WHY: sanitize broken input streams
+    }
+
+    public void Die()
+    {
+        isDead = true;
+        _input = Vector2.zero;
+        _currentVelocity = 0f;
+    }
+
+    public void Revive()
+    {
+        isDead = false;
+        _input = Vector2.zero;
+        _currentVelocity = 0f;
     }
 }
-
-
-
