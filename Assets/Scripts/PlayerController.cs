@@ -24,9 +24,79 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Joystick dynamicJoystick;
 
+<<<<<<< HEAD
     [Range(0f, 0.4f)]
     [SerializeField]
     private float mobileDeadzone = 0.12f;
+=======
+    private void Awake()
+    {
+        _characterController = GetComponent<CharacterController>();
+       // QualitySettings.vSyncCount = 0;           // VSync kapalı (aksi halde cihazın pacing’i yönetir)
+      //  Application.targetFrameRate = 60;          // Stabil 60 FPS
+        // Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
+
+    }
+
+    private void Update()
+    {
+        // JOYSTICK VARSA: her kare joystick'i KESİN olarak kaynak al
+        if (dynamicJoystick != null)
+        {
+            Vector2 j = new Vector2(dynamicJoystick.Horizontal, dynamicJoystick.Vertical);
+            if (j.magnitude < mobileDeadzone) j = Vector2.zero;
+            _input = Vector2.ClampMagnitude(j, 1f);        // <- bırakınca _input = (0,0)
+        }
+
+        _direction = new Vector3(_input.x, 0f, _input.y);
+        if (_direction == Vector3.zero) return;
+
+        float targetAngle = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg;
+        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _currentVelocity, smoothTime);
+
+        transform.rotation = Quaternion.Euler(0f, angle, 0f);
+        _characterController.Move(_direction * speed * Time.deltaTime);
+
+        // sınırlar
+        Vector3 p = transform.position;
+        p.x = Mathf.Clamp(p.x, -18.5f, 18.5f);
+        p.z = Mathf.Clamp(p.z, -18.2f, 19.2f);
+        transform.position = p;
+    }
+
+    // Yeni Input Sistemi (WASD). Joystick bağlıysa bunu YOK SAY.
+    public void Move(InputAction.CallbackContext context)
+    {
+        if (dynamicJoystick != null) return;           // <- kritik
+        if (context.canceled) { _input = Vector2.zero; return; }
+        _input = context.ReadValue<Vector2>();
+    }
+}
+
+*/
+
+
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+
+public class PlayerController : MonoBehaviour
+{
+    private Vector2 _input;
+    private CharacterController _characterController;
+    private Vector3 _direction;
+
+
+    [Header("Movement")]
+    [SerializeField] private float smoothTime = 0.05f;
+    [SerializeField] private float speed = 9f;
+    private float _currentVelocity;
+
+
+    [Header("Mobile Joystick (Joystick Pack)")]
+    [SerializeField] private Joystick dynamicJoystick;
+    [Range(0f, 0.4f)][SerializeField] private float mobileDeadzone = 0.12f;
+>>>>>>> d039317d713cb09fd8ef2ef750340e470f42d285
 
     [Header("Runtime State")]
     [SerializeField]
@@ -97,9 +167,16 @@ public class PlayerController : MonoBehaviour
 
         // bounds
         Vector3 p = transform.position;
+<<<<<<< HEAD
         if (!Finite(p))
             return;
         p.x = Mathf.Clamp(p.x, -19.4f, 22.60f);
+=======
+        // p.x = Mathf.Clamp(p.x, -18.5f, 18.5f);
+        //  p.z = Mathf.Clamp(p.z, -18.2f, 19.2f);
+
+        p.x = Mathf.Clamp(p.x, -19.3f, 22.60f);
+>>>>>>> d039317d713cb09fd8ef2ef750340e470f42d285
         p.z = Mathf.Clamp(p.z, -25f, 16.50f);
         transform.position = p;
     }

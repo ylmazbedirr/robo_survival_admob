@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,6 +6,19 @@ using UnityEngine;
 public sealed class EnemyTouchDamage : MonoBehaviour
 {
     private float damagePerSecond = 20f;
+=======
+
+
+using System.Collections.Generic;
+using UnityEngine;
+
+
+[RequireComponent(typeof(Collider))]
+public sealed class EnemyTouchDamage : MonoBehaviour
+{
+    private float damagePerSecond = 10f;
+    [SerializeField] private string playerTag = "Player";
+>>>>>>> d039317d713cb09fd8ef2ef750340e470f42d285
 
     [SerializeField]
     private string playerTag = "Player";
